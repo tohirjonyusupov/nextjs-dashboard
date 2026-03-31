@@ -5,6 +5,7 @@ import z from "zod";
 import postgres from "postgres";
 import { User } from "./app/lib/definitions";
 import bcrypt from "bcrypt"
+import { log } from "console";
 
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
@@ -29,6 +30,8 @@ export const { auth, signIn, signOut } = NextAuth({
           .safeParse(credentials);
       if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
+          console.log(email, password);
+          
           const user = await getUser(email);
           if (!user) return null;
           const passwordsMatch = await bcrypt.compare(password, user.password);
